@@ -19,14 +19,7 @@
 
 main:
 	read
-	slti t1 a0 '0'
-	bne zero, t1, end
-	slti t1 a0 ':'
-	beq zero, t1, end
-	li a0, '1'
-	print 
-
-end:
+	print
+	addi a0 a0 1
+	print
 	exit
-
-
