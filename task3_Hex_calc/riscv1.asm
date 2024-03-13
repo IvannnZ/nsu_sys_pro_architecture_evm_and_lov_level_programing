@@ -7,7 +7,6 @@
 	syscall 12
 .end_macro
 
-
 .macro print
 	syscall 11
 .end_macro

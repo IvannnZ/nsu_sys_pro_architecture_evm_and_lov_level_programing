@@ -18,9 +18,9 @@
 
 # а в чём отличие между b and j
 main:
+	li t0, '\n'
 	for:
 	read
-	addi t0, zero , 10 # 10 == aski enter
 	beq a0, t0, end_for
 	print
 	addi a0, a0, 1
