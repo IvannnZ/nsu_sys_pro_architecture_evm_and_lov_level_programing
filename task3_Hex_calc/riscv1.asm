@@ -1,3 +1,4 @@
+j main
 .macro syscall %n
 	li a7, %n
 	ecall
@@ -15,29 +16,18 @@
 	syscall 93
 .end_macro
 
-.macro from_16 %in %out
-	slti t0 %in ':'
-	beq zero t0 more_9
-	addi %out, %in , -48
-	beq zero zero end_macro
-more_9:
-	addi %out, %in, -55 
-end_macro:	
-.end_macro
-
 .macro to_16 %in %out
 	slti t0 %in 10
-	beq zero t0 more_9
+	beq zero t0 more9
 	addi %out, %in , 48
 	beq zero zero end_macro
-more_9:
+more9:
 	addi %out, %in, 55 
 end_macro:
 .end_macro
 
 .macro summ %reg1 %reg2 %answ
 	add %answ, %reg1, %reg2
-	andi %answ, %answ, 0xF
 .end_macro
 
 .macro minus %reg1 %reg2 %answ
@@ -53,37 +43,60 @@ end_macro:
 	or %answ, %reg1, %reg2
 .end_macro
 
+scan_16_num:
+	mv t0 zero
+	start_scan:
+		li t1 ' ' # тут пробел
+		read # не стал закидывать в стек, так как ничего не поменяет
+		beq t1, a0, end_scan
+		slli t0, t0, 4
+		slti t1, a0, ':'
+		beq zero t1 more_9
+		addi a0, a0, -48
+		add t0, t0, a0
+		j start_scan
+	more_9:
+		addi a0, a0, -55
+		add t0, t0, a0
+		j start_scan
+	end_scan:
+		mv a0 t0
+		ret
+	
+parse_from_16:
 
+
+.globl main
 main:
+	call scan_16_num
+	mv s1 a0
+	call scan_16_num
+	mv s2 a0
 	read
-	from_16 a0 t1
-	read
-	from_16 a0 t2
-	read
-	add t3, a0 zero
+	
 	li t4 '+'
-	beq t3, t4, sum
+	beq a0, t4, sum
 	li t4 '-'
-	beq t3, t4, minus
+	beq a0, t4, minus
 	li t4 '&'
-	beq t3, t4, annd
+	beq a0, t4, annd
 	li t4 '|'
-	beq t3, t4, orr
+	beq a0, t4, orr
 		
 	
 sum:
-	summ t1 t2 t3
-	beq zero zero end
+	summ s1 s2 t3
+	j end
 	
 minus:
-	minus t1 t2 t3
-	beq zero zero end
+	minus s1 s2 t3
+	j end
 annd:
-	annd t1 t2 t3
-	beq zero zero end
+	annd s1 s2 t3
+	j end
 orr:
-	orr t1 t2 t3
-	beq zero zero end
+	orr s1 s2 t3
+	j end
 end:		
 	to_16 t3 a0
 	print

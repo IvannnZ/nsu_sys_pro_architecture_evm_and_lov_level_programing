@@ -19,7 +19,7 @@
 # а в чём отличие между b and j
 main:
 	li t0, '\n'
-	for:
+for:
 	read
 	beq a0, t0, end_for
 	print
