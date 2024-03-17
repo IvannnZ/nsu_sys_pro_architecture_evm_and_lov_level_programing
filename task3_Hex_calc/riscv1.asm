@@ -29,7 +29,7 @@ end_macro:
 print_16_num: # ввод в a1, вывода нет, пишет в консоль сразу
 	mv t0 zero
 	mv t3 zero
-	addi t3, t3, 1
+	#addi t3, t3, 1
 	start_remake:
 		beq a1, zero, start_print
 		addi t3, t3, 1
