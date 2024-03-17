@@ -26,24 +26,39 @@ more9:
 end_macro:
 .end_macro
 
-.macro summ %reg1 %reg2 %answ
-	add %answ, %reg1, %reg2
-.end_macro
+print_16_num: # ввод в a1, вывода нет, пишет в консоль сразу
+	mv t0 zero
+	mv t3 zero
+	addi t3, t3, 1
+	start_remake:
+		beq a1, zero, start_print
+		addi t3, t3, 1
+		slli t0, t0, 8
+		andi t1, a1, 0xf
+		slti t2, t1, 10
+		beq t2, zero, more__9
+			addi t1, t1, 48
+			add t0, t0, t1
+			srli a1, a1, 4
+			j start_remake 
+		more__9:
+			addi t0, t1, 55
+			add t0, t0, t1
+			srli a1, a1, 4
+			j start_remake
+	start_print:
+		beq t3, zero, end_print
+		addi t3, t3, -1
+		andi a0, t0, 0xff
+		print
+		srli t0, t0, 8
+		j start_print
+	end_print:
+		ret
+		
+		
 
-.macro minus %reg1 %reg2 %answ
-	sub %answ, %reg1, %reg2
-	#andi %answ, %answ, 0xF #вроде при вычитании не нужно обрезать значение
-.end_macro
-
-.macro annd %reg1 %reg2 %answ
-	and %answ, %reg1, %reg2
-.end_macro
-
-.macro orr %reg1 %reg2 %answ
-	or %answ, %reg1, %reg2
-.end_macro
-
-scan_16_num:
+scan_16_num: #нет входа извне, вывод в a0
 	mv t0 zero
 	start_scan:
 		li t1 ' ' # тут пробел
@@ -62,8 +77,6 @@ scan_16_num:
 	end_scan:
 		mv a0 t0
 		ret
-	
-parse_from_16:
 
 
 .globl main
@@ -85,21 +98,21 @@ main:
 		
 	
 sum:
-	summ s1 s2 t3
+	add t3, s1, s2
 	j end
 	
 minus:
-	minus s1 s2 t3
+	sub t3, s1, s2
 	j end
 annd:
-	annd s1 s2 t3
+	and t3, s1, s2
 	j end
 orr:
-	orr s1 s2 t3
+	or t3, s1, s2 
 	j end
 end:		
-	to_16 t3 a0
-	print
+	mv a1, t3
+	call print_16_num
 	exit	
 	
 	
