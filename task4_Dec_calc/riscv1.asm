@@ -238,15 +238,6 @@ rec_multyply:
 	pop ra
 ret
 
-simple_multyply: # ввод a1, a2, вывод:a0
-push ra
-
-
-
-
-pop ra
-ret
-
 
 print_decimal: # ввод в a1, вывода нет, пишет в консоль сразу
 	push ra
@@ -288,10 +279,10 @@ read_decimal: #нет входа извне, вывод в a0
 		read
 		li t1, ' ' # тут пробел
 		beq t1, a0, end_scan
-		li t1, 0
-		bge t1, a0, error_read_decimal
-		li t1, 10
-		bge t1, a0, error_read_decimal
+		li t1, '0'
+		bgt t1, a0, error_read_decimal
+		li t1, '9'
+		bgt a0, t1, error_read_decimal
 		
 		
 		mv a1, t0
@@ -330,7 +321,7 @@ main:
 	beq a0, t4, multyplyy
 	li t4 'l'
 	beq a0, t4, lenn
-
+	error "\nТы должен ввести операцию\n"
 	
 sum:
 	add t3, s1, s2
